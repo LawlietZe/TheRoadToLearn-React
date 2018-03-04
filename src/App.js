@@ -26,10 +26,20 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      list: list,
-      speaker: speaker,
+      list,
+      speaker,
     };
+    this.onDismiss = this.onDismiss.bind(this);
   }
+  onDismiss(id){
+    const isNotId = item => item.objectID !== id;
+    const updateList = this.state.list.filter(isNotId);
+    this.setState({ list: updateList });
+    console.log(this.state.list)
+  }
+  printThis = ()=>
+    console.log(this);
+  
   render() {
     return (
       <div className="App">
@@ -40,8 +50,19 @@ class App extends Component {
             <span>{item.author}</span>
             <span>{item.num_comments}</span>
             <span>{item.points}</span>
+            <span>
+              <button
+                onClick={()=>{
+                  this.onDismiss(item.objectID)
+                }}
+                type="button"
+              >
+              Dismiss
+              </button>
+            </span>
           </div>
           )}
+        <button onClick={this.printThis}>Print This</button>
       </div>
     );
   }
