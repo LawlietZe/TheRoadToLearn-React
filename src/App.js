@@ -20,6 +20,10 @@ const list = [
   },
 ];
 let speaker = "I'm Rick I'm cool !"
+
+//定义高阶函数
+const isSearched = searchItem => item => 
+  item.title.toLowerCase().includes(searchItem.toLowerCase());
 //实现了一个app组件声明，可以在项目任何地方实例化instance , <APP />
 class App extends Component {
   //render方法返回了该组件返回的元素, 这就是JSX，允许你在js中混入HTML
@@ -28,8 +32,10 @@ class App extends Component {
     this.state = {
       list,
       speaker,
+      searchItem: '',
     };
     this.onDismiss = this.onDismiss.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);    
   }
   onDismiss(id){
     const isNotId = item => item.objectID !== id;
@@ -37,14 +43,21 @@ class App extends Component {
     this.setState({ list: updateList });
     console.log(this.state.list)
   }
-  printThis = ()=>
+  printThis = () => {
     console.log(this);
-  
+    alert("action start");
+  }
+  onSearchChange = (event) => {
+    this.setState({searchItem: event.target.value});
+  }  
   render() {
     return (
       <div className="App">
+        <form>
+          <input type="text" onChange={ this.onSearchChange }/>
+        </form>
         <p>{this.state.speaker}</p>
-        {this.state.list.map(item => 
+        {this.state.list.filter(isSearched(this.state.searchItem)).map(item => 
           <div key={item.objectID}>
             <span><a href={item.url}>{item.title}</a></span>
             <span>{item.author}</span>
@@ -62,7 +75,8 @@ class App extends Component {
             </span>
           </div>
           )}
-        <button onClick={this.printThis}>Print This</button>
+        <button onClick={this.printThis}>Print This1</button>
+        <button onClick={()=>{this.printThis()}}>Print This2</button>
       </div>
     );
   }
