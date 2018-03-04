@@ -49,15 +49,16 @@ class App extends Component {
   }
   onSearchChange = (event) => {
     this.setState({searchItem: event.target.value});
-  }  
+  }
   render() {
+    const { searchItem, list } = this.state;
     return (
       <div className="App">
         <form>
           <input type="text" onChange={ this.onSearchChange }/>
         </form>
         <p>{this.state.speaker}</p>
-        {this.state.list.filter(isSearched(this.state.searchItem)).map(item => 
+        {list.filter(isSearched(searchItem)).map(item => 
           <div key={item.objectID}>
             <span><a href={item.url}>{item.title}</a></span>
             <span>{item.author}</span>
