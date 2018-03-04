@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-
 const list = [
   {
     title: 'React',
@@ -55,7 +54,7 @@ class App extends Component {
     return (
       <div className="App">
         <form>
-          <input type="text" onChange={ this.onSearchChange }/>
+          <input value={searchItem} type="text" onChange={ this.onSearchChange }/>
         </form>
         <p>{this.state.speaker}</p>
         {list.filter(isSearched(searchItem)).map(item => 
