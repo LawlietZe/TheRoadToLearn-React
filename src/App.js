@@ -18,7 +18,7 @@ const list = [
     objectID: 1,
   },
 ];
-let speaker = "I'm Rick I'm cool !"
+let speaker = "I'm Rick I'm cool ! STOP LOOKING ME  B I T C H !"
 
 //定义高阶函数
 const isSearched = searchItem => item => 
@@ -53,11 +53,37 @@ class App extends Component {
     const { searchItem, list } = this.state;
     return (
       <div className="App">
-        <form>
-          <input value={searchItem} type="text" onChange={ this.onSearchChange }/>
-        </form>
         <p>{this.state.speaker}</p>
-        {list.filter(isSearched(searchItem)).map(item => 
+        <Search value={searchItem} onChange={ this.onSearchChange } />
+        <Table list={list} pattern={searchItem} onDismiss={this.onDismiss} />
+        <button onClick={this.printThis}>Print This1</button>
+        <button onClick={()=>{this.printThis()}}>Print This2</button>
+      </div>
+    );
+  }
+}
+//定义 search组件
+class Search extends Component {
+  render(){
+    const { value, onChange } = this.props;
+    return (
+      <form>
+        <input 
+          type = "text"
+          value = {value}
+          onChange = {onChange}
+        />
+      </form>
+    );
+  }
+}
+//定义 table组件
+class Table extends Component{
+  render(){
+    const { list, pattern, onDismiss} = this.props;
+    return(
+      <div>
+        {list.filter(isSearched(pattern)).map(item => 
           <div key={item.objectID}>
             <span><a href={item.url}>{item.title}</a></span>
             <span>{item.author}</span>
@@ -66,7 +92,7 @@ class App extends Component {
             <span>
               <button
                 onClick={()=>{
-                  this.onDismiss(item.objectID)
+                  onDismiss(item.objectID)
                 }}
                 type="button"
               >
@@ -75,10 +101,8 @@ class App extends Component {
             </span>
           </div>
           )}
-        <button onClick={this.printThis}>Print This1</button>
-        <button onClick={()=>{this.printThis()}}>Print This2</button>
-      </div>
-    );
+      </div>    
+    )
   }
 }
 
