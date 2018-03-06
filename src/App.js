@@ -54,7 +54,9 @@ class App extends Component {
     return (
       <div className="App">
         <p>{this.state.speaker}</p>
-        <Search value={searchItem} onChange={ this.onSearchChange } />
+        <Search value={searchItem} onChange={ this.onSearchChange }>
+          Search: 
+        </Search>
         <Table list={list} pattern={searchItem} onDismiss={this.onDismiss} />
         <button onClick={this.printThis}>Print This1</button>
         <button onClick={()=>{this.printThis()}}>Print This2</button>
@@ -65,9 +67,10 @@ class App extends Component {
 //定义 search组件
 class Search extends Component {
   render(){
-    const { value, onChange } = this.props;
+    const { value, onChange, children } = this.props;
     return (
       <form>
+        {children}
         <input 
           type = "text"
           value = {value}
