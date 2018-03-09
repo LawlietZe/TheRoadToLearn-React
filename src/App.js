@@ -53,13 +53,17 @@ class App extends Component {
     const { searchItem, list } = this.state;
     return (
       <div className="App">
-        <p>{this.state.speaker}</p>
-        <Search value={searchItem} onChange={ this.onSearchChange }>
-          Search: 
-        </Search>
-        <Table list={list} pattern={searchItem} onDismiss={this.onDismiss} />
-        <button onClick={this.printThis}>Print This1</button>
-        <button onClick={()=>{this.printThis()}}>Print This2</button>
+        <div className="page">
+          <p>{this.state.speaker}</p>
+          <div className="interactions">
+            <Search value={searchItem} onChange={ this.onSearchChange }>
+              Search: 
+            </Search>
+          </div>
+          <Table list={list} pattern={searchItem} onDismiss={this.onDismiss} />
+          <button onClick={this.printThis}>Print This1</button>
+          <button onClick={()=>{this.printThis()}}>Print This2</button>
+        </div>
       </div>
     );
   }
@@ -84,16 +88,25 @@ class Search extends Component {
 class Table extends Component{
   render(){
     const { list, pattern, onDismiss} = this.props;
+    const largeColumn = {
+      width: '40%',
+    };
+    const midColumn = {
+      width: '30%',
+    };
+    const smallColumn = {
+      width: '10%',
+    };
     return(
-      <div>
+      <div className="table">
         {list.filter(isSearched(pattern)).map(item => 
-          <div key={item.objectID}>
-            <span><a href={item.url}>{item.title}</a></span>
-            <span>{item.author}</span>
-            <span>{item.num_comments}</span>
-            <span>{item.points}</span>
-            <span>
-              <Button onClick={()=>{
+          <div key={item.objectID} className="table-row">
+            <span style={{ largeColumn }} ><a href={item.url}>{item.title}</a></span>
+            <span style={{ midColumn }} >{item.author}</span>
+            <span style={{ smallColumn }} >{item.num_comments}</span>
+            <span style={{ smallColumn }} >{item.points}</span>
+            <span style={{ smallColumn }}>
+              <Button className="button-inline" onClick={()=>{
                 onDismiss(item.objectID)
               }}
               >
