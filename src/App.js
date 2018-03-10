@@ -1,40 +1,43 @@
+//"I'm Rick I'm cool ! STOP LOOKING ME  B I T C H !"
+
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-const list = [
-  {
-    title: 'React',
-    url: 'https://facebook.github.io/react/',
-    author: 'Jordan Walke',
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  }, {
-    title: 'Redux',
-    url: 'https://github.com/reactjs/redux',
-    author: 'Dan Abramov, Andrew Clark',
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
-let speaker = "I'm Rick I'm cool ! STOP LOOKING ME  B I T C H !"
 
+const DEFAULT_QUERY = 'redux';
+const PATH_BASE = 'https://hn.algolia.com/api/v1';
+const PATH_SEARCH = '/search';
+const PARAM_SEARCH = 'query=';
+const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
 //定义高阶函数
-const isSearched = searchItem => item => 
-  item.title.toLowerCase().includes(searchItem.toLowerCase());
+const isSearched = searchTerm => item => item.title.toLowerCase().includes(searchTerm.toLowerCase());
 //实现了一个app组件声明，可以在项目任何地方实例化instance , <APP />
 class App extends Component {
   //render方法返回了该组件返回的元素, 这就是JSX，允许你在js中混入HTML
   constructor(props) {
     super(props);
     this.state = {
-      list,
-      speaker,
-      searchItem: '',
+      result: null,
+      searchTerm: DEFAULT_QUERY,
     };
+    this.setSearchTopStories = this.setSearchTopStories.bind(this);
+    this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this);    
     this.onDismiss = this.onDismiss.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);    
+  }
+
+  setSearchTopStories(result) {
+    this.setState({ result });
+  }
+  fetchSearchTopStories(searchTerm) {
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+      .then(response => response.json())
+      .then(result => this.setSearchTopStories(result))
+      .catch(e => e);
+  }
+  componentDidMount() {
+    const { searchTerm } = this.state;
+    this.fetchSearchTopStories(searchTerm);
   }
   onDismiss(id){
     const isNotId = item => item.objectID !== id;
@@ -42,27 +45,25 @@ class App extends Component {
     this.setState({ list: updateList });
     console.log(this.state.list)
   }
-  printThis = () => {
-    console.log(this);
-    alert("action start");
-  }
   onSearchChange = (event) => {
-    this.setState({searchItem: event.target.value});
+    this.setState({searchTerm: event.target.value});
   }
   render() {
-    const { searchItem, list } = this.state;
+    const { searchTerm, result } = this.state;
+    if (!result) { return null; }
     return (
       <div className="App">
         <div className="page">
-          <p>{this.state.speaker}</p>
           <div className="interactions">
-            <Search value={searchItem} onChange={ this.onSearchChange }>
+            <Search value={searchTerm} onChange={ this.onSearchChange }>
               Search: 
             </Search>
           </div>
-          <Table list={list} pattern={searchItem} onDismiss={this.onDismiss} />
-          <button onClick={this.printThis}>Print This1</button>
-          <button onClick={()=>{this.printThis()}}>Print This2</button>
+          <Table 
+            list={result.hits} 
+            pattern={searchTerm} 
+            onDismiss={this.onDismiss} 
+          />
         </div>
       </div>
     );
