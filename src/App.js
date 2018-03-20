@@ -23,13 +23,15 @@ class App extends Component {
     this.setSearchTopStories = this.setSearchTopStories.bind(this);
     this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this);    
     this.onDismiss = this.onDismiss.bind(this);
-    this.onSearchChange = this.onSearchChange.bind(this);    
+    this.onSearchChange = this.onSearchChange.bind(this);
+    this.onSearchSubmit = this.onSearchSubmit.bind(this);    
   }
 
   setSearchTopStories(result) {
     this.setState({ result });
   }
   fetchSearchTopStories(searchTerm) {
+    debugger
     fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
       .then(response => response.json())
       .then(result => this.setSearchTopStories(result))
@@ -49,6 +51,11 @@ class App extends Component {
   onSearchChange = (event) => {
     this.setState({searchTerm: event.target.value});
   }
+  onSearchSubmit(event){
+    const {searchTerm} = this.state;
+    this.fetchSearchTopStories(searchTerm);
+    event.preventDefault();
+  }
   render() {
     const { searchTerm, result } = this.state;
     if (!result) { return null; }
@@ -56,7 +63,7 @@ class App extends Component {
       <div className="App">
         <div className="page">
           <div className="interactions">
-            <Search value={searchTerm} onChange={ this.onSearchChange }>
+            <Search value={searchTerm} onChange={this.onSearchChange} onSubmit={this.onSearchSubmit}>
               Search: 
             </Search>
           </div>
@@ -65,11 +72,9 @@ class App extends Component {
               &&
               <Table
                 list={result.hits}
-                pattern={searchTerm}
                 onDismiss={this.onDismiss}
               />
           }
-
         </div>
       </div>
     );
@@ -78,15 +83,15 @@ class App extends Component {
 //定义 search组件
 class Search extends Component {
   render(){
-    const { value, onChange, children } = this.props;
+    const { value, onChange, children, onSubmit } = this.props;
     return (
-      <form>
-        {children}
+      <form onSubmit={onSubmit}>
         <input 
           type = "text"
           value = {value}
           onChange = {onChange}
         />
+        <button type="submit">{children}</button>
       </form>
     );
   }
@@ -94,7 +99,7 @@ class Search extends Component {
 //定义 table组件
 class Table extends Component{
   render(){
-    const { list, pattern, onDismiss} = this.props;
+    const { list, onDismiss} = this.props;
     const largeColumn = {
       width: '40%',
     };
@@ -106,7 +111,7 @@ class Table extends Component{
     };
     return(
       <div className="table">
-        {list.filter(isSearched(pattern)).map(item => 
+        {list.map(item => 
           <div key={item.objectID} className="table-row">
             <span style={{ largeColumn }} ><a href={item.url}>{item.title}</a></span>
             <span style={{ midColumn }} >{item.author}</span>
